@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>잡으러가요 A7조</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+        * {
+            font-family: 'Gowun Dodum', sans-serif;
+        }
+
+
+        header {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            background-image: url('https://i.postimg.cc/CLYn1Hbr/arceus-thumb-03.jpg');
+            background-position: center;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .main {
+            width: 90%;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .main .left_box {
+            height: 800px;
+            float: left;
+            width: 50%;
+
+        }
+
+        /* .mycards {
+            width: 1200px;
+            margin: 20px auto 20px auto;
+        } */
+
+
+        .mypostingbox {
+            width: 30%;
+            padding-top: 30px;
+            padding-left: 30px;
+            padding-right: 30px;
+            padding-bottom: 300px;
+            border-radius: 5px;
+            float: right;
+            height: 80%;
+            background-image: url(https://i.postimg.cc/rwK0r4k2/image.png);
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .form-floating>input {
+            color: #000;
+        }
+
+        .form-floating>label {
+            color: #000;
+        }
+
+        /*.input-group>label {
+            color:#c300ff
+            backgroud-color:transparent
+        }*/
+
+        .ball_box {
+            position: absolute;
+            right: 0px;
+            bottom: 7px;
+            width: 540px;
+            height: 100px;
+            /* background-color: red; */
+            display: flex;
+        }
+
+        .ball {
+            width: calc(100% / 5);
+            /* background-color: green; */
+            margin-right: 10px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .ball:last-child {
+            margin-right: 0;
+        }
+
+        .ball img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ball.highlight {
+            border-color: #c300ff;
+            box-shadow: 5px 0 20px #c300ff;
+        }
+
+
+        /* 방명록 스타일 */
+        .guest {
+            width: 100%;
+            height: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: scroll;
+            border-radius: 12px;
+            padding: 50px;
+        }
+
+        .guest::-webkit-scrollbar {
+            display: none;
+        }
+
+        .Gpostingbox {
+            /* border: 1px solid #000; */
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .Guestcards {
+            color: white;
+        }
+
+        .guest input {
+            background-color: #fff;
+        }
+
+        .Guestcards {
+            margin-top: 30px;
+        }
+
+        .Guestcards .card-text {
+            background-color: transparent;
+            color: #ffffff;
+            padding: 10px;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDR8ypaHJPT5JxVu09W0pcn1UHIepTYJlc",
+            authDomain: "a7introduce.firebaseapp.com",
+            projectId: "a7introduce",
+            storageBucket: "a7introduce.appspot.com",
+            messagingSenderId: "600959723963",
+            appId: "1:600959723963:web:b638c476e5010242d13c9e",
+            measurementId: "G-MT27G1NW1Q"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let docs = await getDocs(collection(db, "member"));
+        // 위 코드까지 firebase 설정, 절대 건들이지 말 것.
+
+        // 멤버 정보 변수 리스트 형식.
+        // 0: 김보성, 1: 신하운, 2: 최윤미, 3: 박규희, 4: 김현주
+        let memberData = [];
+
+        // 멤버 정보 넣기
+        docs.forEach((doc) => {
+            memberData.push(doc.data())
+        });
+
+        // 멤버 정보 표시 함수. index를 통해 파라미터 전달.
+        let setMemberInfo = (index) => {
+            $('#memberName').val(memberData[index]['name'])
+            $('#memberMBTI').val(memberData[index]['MBTI'])
+            $('#memberStatement').val(memberData[index]['statement'])
+            $('#memberBlog').val(memberData[index]['blog'])
+        }
+        setMemberInfo(0)
+        /*  $(function(){
+ 
+         }) */
+
+        let ballImages = document.querySelectorAll('.ballImage');
+        console.log(ballImages)
+        ballImages.forEach((ball, idx) => {
+            ball.addEventListener('click', () => {
+                setMemberInfo(idx);
+            })
+        })
+
+        const blog = document.getElementById('memberBlog');
+
+        console.log(blog)
+
+        blog.addEventListener('click', () => {
+            let blogAddress = blog.value; // 입력 필드에서 값을 가져옴
+            if (blogAddress) {
+                window.open(blogAddress, '_blank'); // 새 창에 블로그 주소 열기
+            } else {
+                console.log('블로그 주소가 제공되지 않았습니다.');
+            }
+        });
+
+
+        // -------------------------------------------김현주
+
+        $("#postingbtn").click(async function () {
+            let vname = $('#vname').val();
+            let comment = $('#comment').val();
+            let selectedImage = $('#imageSelector').val(); // 추가: 이미지 선택 값 가져오기
+
+            let doc02 = {
+                'vname': vname,
+                'comment': comment,
+                'selectedImage': selectedImage // 추가: Firestore에 이미지 URL 저장
+            };
+
+            await addDoc(collection(db, "visiter"), doc02);
+            alert('7조 응원 완료!>ㅈ<');
+            window.location.reload();
+        });
+
+        let docs02 = await getDocs(collection(db, "visiter"));
+        docs02.forEach((doc02) => {
+            let row = doc02.data();
+
+            let vname = row['vname'];
+            let comment = row['comment'];
+            let selectedImage = row['selectedImage']; // 추가: Firestore에서 이미지 URL 가져오기
+
+            let temp_html = `
+        <div class="col">
+            <div class="card-body">
+                <p class="card-text">
+                    <img src="${selectedImage}" alt="Selected Image">
+                    ${vname} : ${comment}
+                </p>
+            </div>
+        </div>`;
+            $('#Gcards').append(temp_html);
+        });
+
+
+
+    </script>
+</head>
+
+<body>
+
+    <div class="main">
+        <div class="p-5 mb-4 bg-body-tertiary rounded-3 left_box">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">잡으러가요 7조</h1>
+                <h2 class="display-8 fw-bold">팀 소개</h2>
+                <p class="col-md-8 fw-bold fs-8">우리가 누구냐고 물으신다면
+                    대답해 드리는게 인지상정
+                    이 세계의 파괴를 막기 위해
+                    이 세계의 평화를 지키기 위해
+                    사랑과 진실 어둠을 뿌리고 다니는
+                    포켓몬에 감초
+                    귀염둥이 악당
+                    로사
+                    로이
+                    우주를 누비는 우리 로켓단들에겐
+                    아름다운 미래 밝은 내일이 기다리고 있다
+                    난 나옹이다 옹</p>
+                <div class="btn-group" role="group" aria-label="이미지 선택">
+                    <button type="button" class="btn btn-outline-light" onclick="highlightImage(1)">신하운</button>
+                    <button type="button" class="btn btn-outline-light" onclick="highlightImage(2)">최윤미</button>
+                    <button type="button" class="btn btn-outline-light" onclick="highlightImage(3)">박규희</button>
+                    <button type="button" class="btn btn-outline-light" onclick="highlightImage(4)">김현주</button>
+                    <button type="button" class="btn btn-outline-light" onclick="highlightImage(5)">김보성</button>
+                </div>
+
+            </div>
+            <div class="guest">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">포켓몬 선택</span>
+                    <select class="form-select" id="imageSelector">
+                        <option value="https://i.postimg.cc/PJPB2TNr/clipart167739022.png">고라파덕</option>
+                        <option
+                            value="https://i.postimg.cc/MTrJVdqB/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople.png">피카츄</option>
+                            <option value="https://i.postimg.cc/pdCHXPSq/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-1.png">꼬부기</option>
+                            <option value="https://i.postimg.cc/T24TDY3s/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-10.png">이브이</option>
+                            <option value="https://i.postimg.cc/XJv0rTS3/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-2.png">이상해씨</option>
+                            <option value="https://i.postimg.cc/pr4xbkSv/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-11.png">미뇽</option>
+                            <option value="https://i.postimg.cc/5y61RDnp/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-24.png">우츠봇</option>
+                            <option value="https://i.postimg.cc/YSzpG6vN/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-25.png">나옹</option>
+                            <option value="https://i.postimg.cc/DwqhHrPV/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-3.png">파이리</option>
+                            <option value="https://i.postimg.cc/MGqwSn9n/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-4.png">잠만보</option>
+                            <option value="https://i.postimg.cc/mDZTQP9v/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-8.png">푸린</option>
+                            <option value="https://i.postimg.cc/c4t0MyKL/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-6.png">꼬렛</option>
+                            <option value="https://i.postimg.cc/DZCn57d8/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-21.png">콘팡</option>
+                            <option value="https://i.postimg.cc/BnWsmYDc/100-Free-Pokemon-Go-Ai-PSD-Sketch-SVG-PNG-Icons-Bypeople-7.png">피죤</option>
+                            <!-- 추가 이미지를 원한다면 여기에 계속 추가 -->
+                    </select>
+                </div>
+                <div class="Gpostingbox" id="Gpostingbox">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="vname" placeholder="방문자 이름">
+                        <label for="floatingInput">방문자 이름</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="comment" placeholder="방명록 내용">
+                        <label for="floatingInput"> 응원 내용 </label>
+                    </div>
+                    <button id="postingbtn" type="button" class="btn btn-outline-light"> 7조 응원하기!</button>
+                    <button type="button" class="btn btn-outline-light" onclick="clearFields()"> 취소</button>
+
+                </div>
+
+                <div class="Guestcards">
+                    <div id="Gcards">
+
+                    </div>
+                </div>
+            </div><!-- 방명록 섹션 -->
+
+        </div>
+        <div class="mypostingbox">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="memberName" placeholder="이름" readonly>
+                <label for="floatingInput">이름</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="memberMBTI" placeholder="MBTI" readonly>
+                <label for="floatingInput">MBTI</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="memberStatement" placeholder="한마디" readonly>
+                <label for="floatingInput">한마디</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="memberBlog" placeholder="블로그 주소" readonly
+                    style="cursor: pointer;">
+                <label for="floatingInput">블로그 주소</label>
+
+            </div>
+        </div>
+
+        <div class="ball_box">
+            <div class="ball_01 ball"><img class="ballImage" src="./img/ball.png" alt="ball_01"></div>
+            <div class="ball_02 ball"><img class="ballImage" src="./img/ball.png" alt=""></div>
+            <div class="ball_03 ball"><img class="ballImage" src="./img/ball.png" alt=""></div>
+            <div class="ball_04 ball"><img class="ballImage" src="./img/ball.png" alt=""></div>
+            <div class="ball_05 ball"><img class="ballImage" src="./img/ball.png" alt=""></div>
+        </div>
+        <!-- img한테 걸기 -->
+    </div>
+
+    <script>
+        function clearFields() {
+            document.getElementById("vname").value = ""; // 방문자 이름 입력란 지우기
+            document.getElementById("comment").value = ""; // 응원 내용 입력란 지우기
+        }
+        function highlightImage(ballNumber) {
+            // 모든 이미지에서 빛나는 효과 클래스를 제거
+            var allBalls = document.querySelectorAll(".ball");
+            allBalls.forEach(function (ball) {
+                ball.classList.remove("highlight");
+            });
+
+            // 선택한 이미지에 빛나는 효과 클래스 추가
+            var selectedBall = document.querySelector(`.ball_0${ballNumber}`);
+            selectedBall.classList.add("highlight");
+        }
+        function postComment() {
+            var vname = document.getElementById("vname").value;
+            var imageSelector = document.getElementById("imageSelector");
+            var selectedImage = imageSelector.options[imageSelector.selectedIndex].value;
+            var comment = document.getElementById("comment").value;
+        }
+    </script>
+
+</body>
+
+</html>
